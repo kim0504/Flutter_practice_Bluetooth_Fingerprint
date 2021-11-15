@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
 
 class ContainerWidget extends StatelessWidget {
 
-  //late final Storage storage;
+  
 
   @override
   Widget build(BuildContext context) {
@@ -169,7 +169,7 @@ void avg_button(){
   sum3=0;
 
   device1_rssi.sort();
-  
+
   for(var i=1; i<device1_rssi.length-1; i++){
     sum1 += device1_rssi[i];
   }
