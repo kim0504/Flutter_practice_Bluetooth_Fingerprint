@@ -6,6 +6,8 @@ import 'package:path_provider/path_provider.dart';
 
 class Storage {
 
+  String contents = '';
+
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     print(directory.path);
@@ -19,15 +21,18 @@ class Storage {
 
   Future<void> readText()async{
     File file = await _localFile;
-    String text = await file.readAsString();
-    print(text);
+    contents = await file.readAsString();
   }
 
+  String sendText(){
+    readText();
+    return contents;
+  }
 
   Future<String> readFile() async {
     try {
       final file = await _localFile;
-      String contents = await file.readAsString();
+      contents = await file.readAsString();
       return contents;
     } catch (e) {
       // 에러가 발생할 경우 0을 반환

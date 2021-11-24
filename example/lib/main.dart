@@ -9,6 +9,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_blue_example/file_provide.dart';
+import 'package:flutter_blue_example/open_txt.dart';
 import 'package:flutter_blue_example/widgets.dart';
 
 
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
 class ContainerWidget extends StatelessWidget {
 
   late final Storage storage = Storage();
+  String contents = '';
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +80,8 @@ class ContainerWidget extends StatelessWidget {
                   print('=================================================================');
                   print(scan_list);
                   print('=================================================================');
+                  print(device1_rssi);
+                  print(device3_rssi);
                 },
                 color: Colors.lightGreen,
                 shape: RoundedRectangleBorder(
@@ -104,8 +108,9 @@ class ContainerWidget extends StatelessWidget {
                 child: Text('Save RSSI'),
                 onPressed: (){
                   avg_button(); // 파일에 저장할 rssi 평균 값 만들 함수
-                  print("${inputs}\n${name_list[0].toString()}:${(sum1/(device1_rssi.length-2)).toString()}");
-                  storage.writeFile("${inputs}\n${name_list[0].toString()}:${(sum1/(device1_rssi.length-2)).toString()}");
+                  storage.writeFile("[]${inputs};"
+                      "${(sum1/(device1_rssi.length-2)).toStringAsFixed(2).toString()};"
+                      "${(sum3/(device3_rssi.length-2)).toStringAsFixed(2).toString()};");
                 },
                 color: Colors.lightGreen,
                 shape: RoundedRectangleBorder(
@@ -117,7 +122,11 @@ class ContainerWidget extends StatelessWidget {
               RaisedButton(
                 child: Text('print File'),
                 onPressed: (){
-                  storage.readText();
+                  contents = storage.sendText();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=>readPage(contents)),
+                  );
                 },
                 color: Colors.lightGreen,
                 shape: RoundedRectangleBorder(
@@ -125,6 +134,18 @@ class ContainerWidget extends StatelessWidget {
                 ),
               ),
 
+              RaisedButton(
+                child: Text('clear'),
+                onPressed: (){
+                  device1_rssi.clear();
+                  device2_rssi.clear();
+                  device3_rssi.clear();
+                },
+                color: Colors.lightGreen,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+              ),
 
             ] // children
           )
@@ -153,15 +174,21 @@ void blue_scan() {
             device_list.add(r);
             scan_list.add(r.device.name);
             rssi_map.update(r.device.name, (value)=>r.rssi, ifAbsent: ()=> r.rssi);
-            print(rssi_map);
-            device1_rssi.add(rssi_map[name_list[0]]);
-            device2_rssi.add(rssi_map[name_list[1]]);
-            device3_rssi.add(rssi_map[name_list[2]]);
+            if(r.device.name == name_list[0]){
+              device1_rssi.add(rssi_map[name_list[0]]);
+            }
+            if(r.device.name == name_list[1]){
+              device2_rssi.add(rssi_map[name_list[1]]);
+            }
+            if(r.device.name == name_list[2]){
+              device3_rssi.add(rssi_map[name_list[2]]);
+            }
           }
         }
       }
     });
-  });// Listen to scan results
+  });
+  print(rssi_map);// Listen to scan results
 }
 
 void avg_button(){
@@ -172,19 +199,13 @@ void avg_button(){
 
   device1_rssi.sort();
 
-  for(var i=1; i<device1_rssi.length-1; i++){
+  for(var i=1; i<device1_rssi.length-1; i++) {
     sum1 += device1_rssi[i];
-    save_rssi1 = (sum1/(device1_rssi.length-2)).toString();
+    save_rssi1 = (sum1 / (device1_rssi.length - 2)).toString();
   }
-  // for(int i in device2_rssi){
-  //   sum2 += i;
-  // }
-  // for(int i in device3_rssi){
-  //   sum3 += i;
-  // }
-  print('=====================================================================');
-  print('device1_rssi list : ${device1_rssi},,, sum = ${sum1},,, avg = ${sum1/(device1_rssi.length-2)}');
-  // print('device1_rssi list : ${device2_rssi},,, sum = ${sum2}\n');
-  // print('device1_rssi list : ${device3_rssi},,, sum = ${sum3}\n');
-  print('=====================================================================');
+  for(var i=1; i<device3_rssi.length-1; i++){
+    sum3 += device3_rssi[i];
+    save_rssi3 = (sum3/(device3_rssi.length-2)).toString();
+  }
+
 }
