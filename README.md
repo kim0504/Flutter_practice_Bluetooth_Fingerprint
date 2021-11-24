@@ -47,7 +47,7 @@ var subscription = flutterBlue.scanResults.listen((results) {
 });
 
 // Stop scanning
-flutterBlue.stopScan();
+flutterBlue.stopScan(); 
 ```
 
 ### Connect to a device

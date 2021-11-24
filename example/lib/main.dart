@@ -23,9 +23,8 @@ List<dynamic> device3_rssi = []; //핸드폰 rssi값
 String inputs = ""; // 측정 공간 이름 -> 나중에 어디서 측정했는지 DB에 넣을려고 만듬
 
 // rssi 평균 값 계산하려고 일단 만들어 놓음
-num sum1=0;
-num sum2=0;
-num sum3=0;
+num sum1=0, sum2=0, sum3=0;
+String save_rssi1='', save_rssi2='', save_rssi3='';
 
 
 void main() {
@@ -47,7 +46,7 @@ class MyApp extends StatelessWidget {
 
 class ContainerWidget extends StatelessWidget {
 
-  
+  late final Storage storage = Storage();
 
   @override
   Widget build(BuildContext context) {
@@ -59,9 +58,8 @@ class ContainerWidget extends StatelessWidget {
           child: Column(
             children: [
               RaisedButton(
-                child: Text('Button'),
+                child: Text('Scan'),
                 onPressed: (){
-
                   blue_scan(); // 블루투스 스캔 기능
                 },
 
@@ -73,25 +71,13 @@ class ContainerWidget extends StatelessWidget {
 
 
               RaisedButton(
-                child: Text('Button'),
+                child: Text('Info'),
                 onPressed: (){
                   print('=================================================================');
                   print(device_list);
                   print('=================================================================');
                   print(scan_list);
                   print('=================================================================');
-                },
-                color: Colors.lightGreen,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8)
-                ),
-              ),
-              RaisedButton(
-                child: Text('Avg Button'),
-                onPressed: (){
-
-                  avg_button(); // 파일에 저장할 rssi 평균 값 만들 함수
-
                 },
                 color: Colors.lightGreen,
                 shape: RoundedRectangleBorder(
@@ -113,17 +99,33 @@ class ContainerWidget extends StatelessWidget {
                 width: 300,
               ),
 
-              // 파일에 rssi값 저장 시키는 버튼 준비 중
-              // RaisedButton(
-              //   child: Text('Button'),
-              //   onPressed: (){
-              //
-              //   },
-              //   color: Colors.lightGreen,
-              //   shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(8)
-              //   ),
-              // ),
+
+              RaisedButton(
+                child: Text('Save RSSI'),
+                onPressed: (){
+                  avg_button(); // 파일에 저장할 rssi 평균 값 만들 함수
+                  print("${inputs}\n${name_list[0].toString()}:${(sum1/(device1_rssi.length-2)).toString()}");
+                  storage.writeFile("${inputs}\n${name_list[0].toString()}:${(sum1/(device1_rssi.length-2)).toString()}");
+                },
+                color: Colors.lightGreen,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+              ),
+
+
+              RaisedButton(
+                child: Text('print File'),
+                onPressed: (){
+                  storage.readText();
+                },
+                color: Colors.lightGreen,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
+              ),
+
+
             ] // children
           )
         )
@@ -172,6 +174,7 @@ void avg_button(){
 
   for(var i=1; i<device1_rssi.length-1; i++){
     sum1 += device1_rssi[i];
+    save_rssi1 = (sum1/(device1_rssi.length-2)).toString();
   }
   // for(int i in device2_rssi){
   //   sum2 += i;

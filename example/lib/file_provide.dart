@@ -6,37 +6,38 @@ import 'package:path_provider/path_provider.dart';
 
 class Storage {
 
-  String filename = 'radio_map';
-
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
-
+    print(directory.path);
     return directory.path;
   }
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$filename.txt');
+    return File('$path/radio_map.txt');
   }
 
-  Future<int> readCounter() async {
+  Future<void> readText()async{
+    File file = await _localFile;
+    String text = await file.readAsString();
+    print(text);
+  }
+
+
+  Future<String> readFile() async {
     try {
       final file = await _localFile;
-
-      // 파일 읽기
       String contents = await file.readAsString();
-
-      return int.parse(contents);
+      return contents;
     } catch (e) {
       // 에러가 발생할 경우 0을 반환
-      return 0;
+      return e.toString();
     }
   }
 
-  Future<File> writeCounter(List<dynamic> s) async {
+  Future<File> writeFile(String s) async {
     final file = await _localFile;
-
-    // 파일 쓰기
+    print(file);
     return file.writeAsString('$s\n', mode: FileMode.append);
   }
 }
