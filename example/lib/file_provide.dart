@@ -16,7 +16,7 @@ class Storage {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/radio_map.txt');
+    return File('$path/radio_ma.txt');
   }
 
   Future<void> readText()async{

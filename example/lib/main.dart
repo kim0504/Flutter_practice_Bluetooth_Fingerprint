@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_blue_example/file_provide.dart';
 import 'package:flutter_blue_example/open_txt.dart';
+import 'package:flutter_blue_example/predictPage.dart';
 import 'package:flutter_blue_example/widgets.dart';
 
 
@@ -22,6 +23,7 @@ List<dynamic> device2_rssi = []; //버즈 rssi값
 List<dynamic> device3_rssi = []; //핸드폰 rssi값
 
 String inputs = ""; // 측정 공간 이름 -> 나중에 어디서 측정했는지 DB에 넣을려고 만듬
+Map<String, dynamic> rssi_map = {};
 
 // rssi 평균 값 계산하려고 일단 만들어 놓음
 num sum1=0, sum2=0, sum3=0;
@@ -81,7 +83,10 @@ class ContainerWidget extends StatelessWidget {
                   print(scan_list);
                   print('=================================================================');
                   print(device1_rssi);
+                  print(device2_rssi);
                   print(device3_rssi);
+                  print('=================================================================');
+                  print(rssi_map);
                 },
                 color: Colors.lightGreen,
                 shape: RoundedRectangleBorder(
@@ -110,6 +115,7 @@ class ContainerWidget extends StatelessWidget {
                   avg_button(); // 파일에 저장할 rssi 평균 값 만들 함수
                   storage.writeFile("[]${inputs};"
                       "${(sum1/(device1_rssi.length-2)).toStringAsFixed(2).toString()};"
+                      "${(sum2/(device2_rssi.length-2)).toStringAsFixed(2).toString()};"
                       "${(sum3/(device3_rssi.length-2)).toStringAsFixed(2).toString()};");
                 },
                 color: Colors.lightGreen,
@@ -120,12 +126,12 @@ class ContainerWidget extends StatelessWidget {
 
 
               RaisedButton(
-                child: Text('print File'),
+                child: Text('ListView'),
                 onPressed: (){
                   contents = storage.sendText();
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context)=>readPage(contents)),
+                    MaterialPageRoute(builder: (context)=>readPage(contents, name_list)),
                   );
                 },
                 color: Colors.lightGreen,
@@ -135,17 +141,20 @@ class ContainerWidget extends StatelessWidget {
               ),
 
               RaisedButton(
-                child: Text('clear'),
+                child: Text('Predict'),
                 onPressed: (){
-                  device1_rssi.clear();
-                  device2_rssi.clear();
-                  device3_rssi.clear();
+                  //blue_scan();
+                  contents = storage.sendText();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=>predictPage(contents, name_list, [rssi_map[name_list[0]], rssi_map[name_list[1]], rssi_map[name_list[2]]])),
+                  );
                 },
                 color: Colors.lightGreen,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)
                 ),
-              ),
+              )
 
             ] // children
           )
@@ -157,7 +166,7 @@ class ContainerWidget extends StatelessWidget {
 
 void blue_scan() {
 
-  Map<String, dynamic> rssi_map = {};
+  rssi_map = {};
 
   //초기화
   scan_list = [];
@@ -202,6 +211,10 @@ void avg_button(){
   for(var i=1; i<device1_rssi.length-1; i++) {
     sum1 += device1_rssi[i];
     save_rssi1 = (sum1 / (device1_rssi.length - 2)).toString();
+  }
+  for(var i=1; i<device2_rssi.length-1; i++){
+    sum2 += device2_rssi[i];
+    save_rssi2 = (sum2/(device2_rssi.length-2)).toString();
   }
   for(var i=1; i<device3_rssi.length-1; i++){
     sum3 += device3_rssi[i];
