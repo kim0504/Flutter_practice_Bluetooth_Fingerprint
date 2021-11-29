@@ -11,10 +11,12 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:flutter_blue_example/file_provide.dart';
 import 'package:flutter_blue_example/open_txt.dart';
 import 'package:flutter_blue_example/predictPage.dart';
+import 'package:flutter_blue_example/example.dart';
 import 'package:flutter_blue_example/widgets.dart';
 
-
+// =====================================사용하려면 이거 리스트 수정해야댐.==================================
 final List<String> name_list = ['[TV] Samsung Q90 Series (65)','Buds+', 'tony의 S21']; //이거 우리 집에 있는 tv랑, 내 버즈랑, 핸드폰으로 측정할 거 리스트로 만듬
+
 List<dynamic> scan_list = []; //블루투스 스캔할 때 한 번에 5~7개씩 값이 들어와서 중복 막으려고 만든 리스트
 List<dynamic> device_list = []; //블루투스로 받은 기기 정보 볼려고 만든 리스트
 
@@ -64,7 +66,7 @@ class ContainerWidget extends StatelessWidget {
               RaisedButton(
                 child: Text('Scan'),
                 onPressed: (){
-                  blue_scan(); // 블루투스 스캔 기능
+                  blue_scan2(); // 블루투스 스캔 기능
                 },
 
                 color: Colors.lightGreen,
@@ -154,6 +156,22 @@ class ContainerWidget extends StatelessWidget {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8)
                 ),
+              ),
+
+              RaisedButton(
+                child: Text('example'),
+                onPressed: (){
+                  //blue_scan();
+                  contents = storage.sendText();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context)=>MyHomePage()),
+                  );
+                },
+                color: Colors.lightGreen,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8)
+                ),
               )
 
             ] // children
@@ -175,29 +193,58 @@ void blue_scan() {
   FlutterBlue flutterBlue = FlutterBlue.instance;
   flutterBlue.startScan(timeout: Duration(seconds: 4));
 
-  Future.delayed(const Duration(milliseconds: 4000), () {
-    var subscription = flutterBlue.scanResults.listen((results) {
-      for (ScanResult r in results) {
-        if(name_list.contains(r.device.name)){
-          if(!(scan_list.contains(r.device.name))){
-            device_list.add(r);
-            scan_list.add(r.device.name);
-            rssi_map.update(r.device.name, (value)=>r.rssi, ifAbsent: ()=> r.rssi);
-            if(r.device.name == name_list[0]){
-              device1_rssi.add(rssi_map[name_list[0]]);
-            }
-            if(r.device.name == name_list[1]){
-              device2_rssi.add(rssi_map[name_list[1]]);
-            }
-            if(r.device.name == name_list[2]){
-              device3_rssi.add(rssi_map[name_list[2]]);
-            }
+  var subscription = flutterBlue.scanResults.listen((results) {
+    for (ScanResult r in results) {
+      print("===== ${r.device.name} : ${r.rssi} =====");
+      if(name_list.contains(r.device.name)){
+        if(!(scan_list.contains(r.device.name))){
+          device_list.add(r);
+          scan_list.add(r.device.name);
+          rssi_map.update(r.device.name, (value)=>r.rssi, ifAbsent: ()=> r.rssi);
+          if(r.device.name == name_list[0]){
+            device1_rssi.add(rssi_map[name_list[0]]);
+          }
+          if(r.device.name == name_list[1]){
+            device2_rssi.add(rssi_map[name_list[1]]);
+          }
+          if(r.device.name == name_list[2]){
+            device3_rssi.add(rssi_map[name_list[2]]);
           }
         }
       }
-    });
+    }
   });
+  flutterBlue.stopScan();
+
+  // Future.delayed(const Duration(milliseconds: 4000), () {
+  //   var subscription = flutterBlue.scanResults.listen((results) {
+  //     for (ScanResult r in results) {
+  //       if(name_list.contains(r.device.name)){
+  //         if(!(scan_list.contains(r.device.name))){
+  //           device_list.add(r);
+  //           scan_list.add(r.device.name);
+  //           rssi_map.update(r.device.name, (value)=>r.rssi, ifAbsent: ()=> r.rssi);
+  //           if(r.device.name == name_list[0]){
+  //             device1_rssi.add(rssi_map[name_list[0]]);
+  //           }
+  //           if(r.device.name == name_list[1]){
+  //             device2_rssi.add(rssi_map[name_list[1]]);
+  //           }
+  //           if(r.device.name == name_list[2]){
+  //             device3_rssi.add(rssi_map[name_list[2]]);
+  //           }
+  //         }
+  //       }
+  //     }
+  //   });
+  // });
   print(rssi_map);// Listen to scan results
+}
+
+void blue_scan2(){
+  for(var i=0; i<3; i++){
+    blue_scan();
+  }
 }
 
 void avg_button(){

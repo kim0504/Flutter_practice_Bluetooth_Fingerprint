@@ -25,7 +25,13 @@ class readPage extends StatelessWidget{
         itemCount: map_list.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            leading: Icon(Icons.align_vertical_bottom),
+            leading: CircleAvatar(
+              child: Icon(
+                Icons.bluetooth,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.cyan,
+            ),
             title: Text(map_list[index]),
             subtitle: Text("${radio_map[map_list[index]]}"),
           );
