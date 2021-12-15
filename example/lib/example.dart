@@ -43,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
       flutterBlue.scanResults.listen((results) {
         // List<ScanResult> 형태의 results 값을 scanResultList에 복사
         scanResultList = results;
+        print(scanResultList);
         // UI 갱신
         setState(() {});
       });

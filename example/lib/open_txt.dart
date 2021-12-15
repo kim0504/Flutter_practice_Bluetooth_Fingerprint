@@ -18,7 +18,8 @@ class readPage extends StatelessWidget{
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("첫 페이지"),
+        title: Text("radio map",
+            style: TextStyle(color: Colors.white)),
       ),
       body: ListView.separated(
         padding: const EdgeInsets.all(8),
