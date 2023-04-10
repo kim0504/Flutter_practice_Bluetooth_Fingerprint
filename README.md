@@ -1,3 +1,8 @@
+## [한양대 ERICA] 신용카드 사용자 연체 예측 AI 경진대회
+- **주제**  : 블루투스를 사용한 실내 측위 개발
+- **유형**  : 앱 개발
+- **개발**  : Android Studio, Flutter, Dart
+
 ## 메인화면 (구성 수정 필요)
 ### - scan
 사용할 값들만 스캔해서 리스트에 저장하는 기능<br>
@@ -18,3 +23,7 @@ scan에서 받은 값의 정보를 print
 ### - example (이름 수정 필요)
 기기로 들어오는 모든 디바이스들 값을 리스트뷰로 출력<br>
 (매우 필요) 체크박스로 원하는 디바이스 선택 후 scan 기능 사용하게 수정 필요 
+
+![슬라이드1](https://user-images.githubusercontent.com/81956540/230839970-d603abf2-e5dd-46e6-abd0-a9bc8c72ef1f.PNG)
+![슬라이드2](https://user-images.githubusercontent.com/81956540/230839992-2843415b-c939-494d-9c6a-7304d0ab6551.PNG)
+![슬라이드3](https://user-images.githubusercontent.com/81956540/230840004-dec5c541-f0af-400c-a2b4-2a179197b6d8.PNG)
